@@ -1,3 +1,26 @@
+//Validation funciton logic 
+interface Validateble  {
+  value:string | number;
+  required?:boolean;
+  minLength?:number;
+  maxLength?:number;
+  min?:number;
+  max?:number;
+
+}
+function validate(validatableInput:Validateble){
+  //begin with internal state set to true; 
+  let isValid = true;
+  if(validatableInput.required){
+    //add type guard here before trim the value or just convert it to string
+    isValid = isValid && validatableInput.value.toString().trim().length !== 0
+  }
+  if(validatableInput.minLength && typeof validatableInput.value === 'string'){
+    
+  }
+}
+
+
 // Code goes here! 17/3/2024
 //trying for typecript review
 //drag and drop with typescript OOP
@@ -71,9 +94,9 @@ class ProjectInput {
     const enteredPeople = this.peopleInputElement.value;
 
     if (
-      enteredTitle.trim().length === 0 ||
-      enteredDescription.trim().length === 0 ||
-      enteredPeople.trim().length === 0
+      validate({ value: enteredTitle, required:true,minLength:5 })
+      validate({ value: enteredDescription, required:true,minLength:5 })
+      validate({ value: enteredPeople, required:true,minLength:5 })
     ) {
       alert('Invalid input,Please try again later');
       return;
