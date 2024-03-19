@@ -1,25 +1,48 @@
-//Validation funciton logic 
-interface Validateble  {
-  value:string | number;
-  required?:boolean;
-  minLength?:number;
-  maxLength?:number;
-  min?:number;
-  max?:number;
-
+//Validation funciton logic
+interface Validateble {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
 }
-function validate(validatableInput:Validateble){
-  //begin with internal state set to true; 
+function validate(validatableInput: Validateble) {
+  //begin with internal state set to true;
   let isValid = true;
-  if(validatableInput.required){
+  if (validatableInput.required) {
     //add type guard here before trim the value or just convert it to string
-    isValid = isValid && validatableInput.value.toString().trim().length !== 0
+    isValid = isValid && validatableInput.value.toString().trim().length !== 0;
   }
-  if(validatableInput.minLength && typeof validatableInput.value === 'string'){
-    
+  if (
+    validatableInput.minLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid =
+      isValid && validatableInput.value.length > validatableInput.minLength;
   }
-}
+  if (
+    validatableInput.maxLength != null &&
+    typeof validatableInput.value === 'string'
+  ) {
+    isValid =
+      isValid && validatableInput.value.length < validatableInput.maxLength;
+  }
+  if (
+    validatableInput.min != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value > validatableInput.min;
+  }
+  if (
+    validatableInput.max != null &&
+    typeof validatableInput.value === 'number'
+  ) {
+    isValid = isValid && validatableInput.value < validatableInput.max;
+  }
 
+  return isValid;
+}
 
 // Code goes here! 17/3/2024
 //trying for typecript review
@@ -93,10 +116,28 @@ class ProjectInput {
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
 
+    const titleValidatable: Validateble = {
+      value: enteredTitle,
+      required: true,
+    };
+
+    const descriptionValidatable: Validateble = {
+      value: enteredDescription,
+      required: true,
+      minLength: 5,
+    };
+
+    const peopleValidatable: Validateble = {
+      value: +enteredPeople,
+      required: true,
+      min: 1,
+      max: 5,
+    };
+
     if (
-      validate({ value: enteredTitle, required:true,minLength:5 })
-      validate({ value: enteredDescription, required:true,minLength:5 })
-      validate({ value: enteredPeople, required:true,minLength:5 })
+      !validate(titleValidatable) ||
+      !validate(descriptionValidatable) ||
+      !validate(peopleValidatable)
     ) {
       alert('Invalid input,Please try again later');
       return;
