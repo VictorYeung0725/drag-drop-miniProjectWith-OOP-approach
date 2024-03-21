@@ -1,3 +1,46 @@
+//Project state management 21/3/2024
+class ProjectState {
+  //create a listener for all the changing to the state and reflect the changes
+  private listeners: any[] = [];
+  private project: any[] = [];
+  private static instance: ProjectState;
+
+  private constructor() {}
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  //here will call the listener and check the array
+  addListeners(listenerFn: Function) {
+    this.listeners.push(listenerFn);
+  }
+
+  //trigger to push into the project list method (public)
+  addProject(title: string, description: string, numOfPeople: number) {
+    const newProject = {
+      id: Math.random().toString(),
+      title: title,
+      description: description,
+      people: numOfPeople,
+    };
+    this.project.push(newProject);
+    for (const listenerFn of this.listeners) {
+      listenerFn(this.project.slice());
+    }
+  }
+}
+
+//create a new instance for updating the global state
+//NOTE this way we make sure only work on the same state of object
+//prevent create more than one state, and changing the wrong state in OOP
+//singletons pattern
+const projectState = ProjectState.getInstance();
+
 //Validation funciton logic
 interface Validateble {
   value: string | number;
@@ -195,6 +238,7 @@ class ProjectInput {
     if (Array.isArray(userInput)) {
       const [title, descrip, people] = userInput;
       console.log(title, descrip, people);
+      projectState.addProject(title, descrip, people);
     }
     this.clearInputs();
   }
